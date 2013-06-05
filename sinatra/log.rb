@@ -1,12 +1,17 @@
 require 'logger'
 require 'singleton'
+require 'remote_syslog_logger/udp_sender'
 
 class Log < Logger
   include Singleton
 
   def initialize
     #file = STDOUT
-    file = File.join( Trema.log, 'TestControllerWeb.log' )
+    #file = File.join( Trema.log, 'TestControllerWeb.log' )
+    remote_hostname = "127.0.0.1"
+    remote_port = 514
+    options = { :program => 'TestControllerWeb' }
+    file = RemoteSyslogLogger::UdpSender.new(remote_hostname, remote_port, options)
     shift_age = 0
     shift_size = 1048576
 
