@@ -1,7 +1,8 @@
-require 'log'
+require 'json'
 require 'sinatra/base'
 require 'webrick'
-require 'json'
+require 'log'
+require 'switches'
 
 class ThreadServer
   def ThreadServer.start
@@ -25,10 +26,36 @@ class TestControllerWeb < Sinatra::Base
     :ServerType => ThreadServer
   }
 
-  get '/foo' do
-    foo = App[ 'TestController' ].foo
+  def json_body value = nil
     content_type :json
-    JSON.pretty_generate( foo ) + "\n"
+    body JSON.pretty_generate( value ) + "\n"
   end
 
+  get '/switches/?' do
+    switches = Switches.instance.list.collect do | datapath_id |
+      datapath_id.to_hex
+    end
+    json_body switches
+  end
+
+  get '/switches/:datapath_id/?' do | datapath_id |
+    switch = Switches.instance[ datapath_id.hex ]
+    if switch.nil?
+      status 404
+    else
+      json_body switch.description
+    end
+  end
+
+  get '/*' do
+    status 404
+  end
 end
+
+#class WEBrickWrapper < Rack::Handler::WEBrick
+#  def self.run( app, options = {} )
+#    options.merge! TestControllerWeb.settings.server_settings
+#    super( app, options )
+#  end
+#end
+#Rack::Handler.register 'webrick', 'WEBrickWrapper'
