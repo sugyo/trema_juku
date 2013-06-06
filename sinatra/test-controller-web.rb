@@ -52,10 +52,12 @@ class TestControllerWeb < Sinatra::Base
   end
 end
 
-#class WEBrickWrapper < Rack::Handler::WEBrick
-#  def self.run( app, options = {} )
-#    options.merge! TestControllerWeb.settings.server_settings
-#    super( app, options )
-#  end
-#end
-#Rack::Handler.register 'webrick', 'WEBrickWrapper'
+if Sinatra::VERSION == "1.2.6"
+  class WEBrickWrapper < Rack::Handler::WEBrick
+    def self.run( app, options = {} )
+      options.merge! TestControllerWeb.settings.server_settings
+      super( app, options )
+    end
+  end
+  Rack::Handler.register 'webrick', 'WEBrickWrapper'
+end

@@ -2,7 +2,11 @@ requirements
 
   - sinatra
 
-        $ sudo gem install sinatra remote_syslog_logger
+        $ sudo gem install sinatra
+
+  - syslog_logger
+
+        $ sudo gem install syslog_logger
 
 how to run
 
@@ -18,7 +22,7 @@ index 882f7d3..886ee99 100644
    gem "rspec", "~> 2.13.0"
    gem "yard", "~> 0.8.5.2"
 +  gem "sinatra"
-+  gem "remote_syslog_logger"
++  gem "syslog_logger"
  end
 
 
