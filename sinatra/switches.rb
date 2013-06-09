@@ -2,26 +2,63 @@ require 'singleton'
 require 'log'
 
 class Switch
-  attr_reader :datapath_id, :registered_at
-  attr_accessor :description
+  attr_reader :datapath_id, :description, :features
+  attr_accessor :ports
+  attr_reader :registered_at
 
   def initialize datapath_id
     @datapath_id = datapath_id
-    @description = nil
+    @features_reply = {}
+    @description = {}
+    @ports = {}
     @registered_at = Time.now
   end
 
-  def description
-    desc = { :registered_at => @registered_at.strftime( "%Y-%m-%d %H:%M:%S" ) }
-    unless @description.nil?
-      desc.merge(
-        :mfr_desc => @description.mfr_desc,
-        :hw_desc => @description.hw_desc,
-        :sw_desc => @description.sw_desc,
-        :serial_num => @description.serial_num,
-        :dp_desc => @description.dp_desc
-      )
+  def features= features
+    @features = {
+      :n_buffers => features.n_buffers,
+      :n_tables => features.n_tables,
+      :capabilities => features.capabilities,
+      :actions => features.capabilities,
+      :updated_at => Time.new
+    }
+  end
+
+  def description= desc_stats
+    @description = {
+      :mfr_desc => desc_stats.mfr_desc,
+      :hw_desc => desc_stats.hw_desc,
+      :sw_desc => desc_stats.sw_desc,
+      :serial_num => desc_stats.serial_num,
+      :dp_desc => desc_stats.dp_desc,
+      :updated_at => Time.new
+    }
+  end
+
+  def add port
+    @ports.each_value do | each |
+      if each[ :name ] == port.name
+        @ports.delete each[ :number ]
+        break
+      end
     end
+    @ports[ port.number ] = {
+      :number => port.number,
+      :hw_addr => port.hw_addr,
+      :name => port.name,
+      :config => port.config,
+      :state => port.state,
+      :curr => port.curr,
+      :curr => port.curr,
+      :advertised => port.advertised,
+      :supported => port.supported,
+      :peer => port.peer,
+      :updated_at => Time.now
+    }
+  end
+
+  def delete port
+    @ports.delete port.number
   end
 end
 

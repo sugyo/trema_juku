@@ -11,7 +11,12 @@ class ThreadServer
       exit
     end
   end
+end
 
+class Time
+  def to_s
+    strftime( "%Y-%m-%d %H:%M:%S" )
+  end
 end
 
 class TestControllerWeb < Sinatra::Base
@@ -38,12 +43,30 @@ class TestControllerWeb < Sinatra::Base
     json_body switches
   end
 
-  get '/switches/:datapath_id/?' do | datapath_id |
+  get '/switches/:datapath_id/description/?' do | datapath_id |
     switch = Switches.instance[ datapath_id.hex ]
     if switch.nil?
       status 404
     else
       json_body switch.description
+    end
+  end
+
+  get '/switches/:datapath_id/features/?' do | datapath_id |
+    switch = Switches.instance[ datapath_id.hex ]
+    if switch.nil?
+      status 404
+    else
+      json_body switch.features
+    end
+  end
+
+  get '/switches/:datapath_id/ports/?' do | datapath_id |
+    switch = Switches.instance[ datapath_id.hex ]
+    if switch.nil?
+      status 404
+    else
+      json_body switch.ports.each_value.collect
     end
   end
 
