@@ -43,6 +43,15 @@ class TestControllerWeb < Sinatra::Base
     json_body switches
   end
 
+  get '/switches/:datapath_id/?' do | datapath_id |
+    switch = Switches.instance[ datapath_id.hex ]
+    if switch.nil?
+      status 404
+    else
+      json_body :registered_at => switch.registered_at
+    end
+  end
+
   get '/switches/:datapath_id/description/?' do | datapath_id |
     switch = Switches.instance[ datapath_id.hex ]
     if switch.nil?
@@ -66,7 +75,7 @@ class TestControllerWeb < Sinatra::Base
     if switch.nil?
       status 404
     else
-      json_body switch.ports.each_value.collect
+      json_body switch.ports.values
     end
   end
 
