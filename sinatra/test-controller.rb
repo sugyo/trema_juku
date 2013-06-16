@@ -17,7 +17,10 @@ end
 class TestController < Controller
   def start
     logger.info "start"
-    TestControllerWeb.run!
+    Thread.new do
+      TestControllerWeb.run!
+      exit
+    end
   end
 
   def switch_ready datapath_id

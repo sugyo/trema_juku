@@ -4,15 +4,6 @@ require 'webrick'
 require 'log'
 require 'switches'
 
-class ThreadServer
-  def ThreadServer.start
-    Thread.new do
-      yield
-      exit
-    end
-  end
-end
-
 class Time
   def to_s
     strftime( "%Y-%m-%d %H:%M:%S" )
@@ -28,7 +19,7 @@ class TestControllerWeb < Sinatra::Base
       [ logger, WEBrick::AccessLog::COMMON_LOG_FORMAT ],
       [ logger, WEBrick::AccessLog::REFERER_LOG_FORMAT ]
     ],
-    :ServerType => ThreadServer
+    :ServerType => WEBrick::SimpleServer
   }
 
   def json_body value = nil
@@ -41,6 +32,15 @@ class TestControllerWeb < Sinatra::Base
       datapath_id.to_hex
     end
     json_body switches
+  end
+
+  get '/switches/:datapath_id/?' do | datapath_id |
+    switch = Switches.instance[ datapath_id.hex ]
+    if switch.nil?
+      status 404
+    else
+      json_body switch.registered_at
+    end
   end
 
   get '/switches/:datapath_id/description/?' do | datapath_id |
@@ -66,7 +66,24 @@ class TestControllerWeb < Sinatra::Base
     if switch.nil?
       status 404
     else
-      json_body switch.ports.each_value.collect
+      ports = switch.ports.values.collect do | each |
+        each[ :number ]
+      end
+      json_body ports
+    end
+  end
+
+  get '/switches/:datapath_id/ports/:port_no/?' do | datapath_id, port_no |
+    switch = Switches.instance[ datapath_id.hex ]
+    if switch.nil?
+      status 404
+    else
+      port = switch.ports[ port_no.to_i ]
+      if port.nil?
+        status 404
+      else
+        json_body port
+      end
     end
   end
 
