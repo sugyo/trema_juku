@@ -39,6 +39,7 @@ class TestController < Controller
     logger.info "switch_features"
     switch = Switches.instance[ datapath_id ]
     return if switch.nil?
+    switch.features = message
     message.ports.each do | each |
       switch.add each
     end

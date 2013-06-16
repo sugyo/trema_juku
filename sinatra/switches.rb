@@ -8,7 +8,7 @@ class Switch
 
   def initialize datapath_id
     @datapath_id = datapath_id
-    @features_reply = {}
+    @features = {}
     @description = {}
     @ports = {}
     @registered_at = Time.now

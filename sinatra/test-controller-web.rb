@@ -39,7 +39,7 @@ class TestControllerWeb < Sinatra::Base
     if switch.nil?
       status 404
     else
-      json_body switch.registered_at
+      json_body :registered_at => switch.registered_at
     end
   end
 
