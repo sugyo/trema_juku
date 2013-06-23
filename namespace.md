@@ -1,3 +1,9 @@
+---
+layout : default
+title : network namespace をつかってる?
+exclude : true
+---
+
 # network namespace をつかってる?
 
 network namespace を使っていますか？
