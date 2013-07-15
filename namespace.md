@@ -1,7 +1,6 @@
 ---
 layout : default
 title : network namespace をつかってる?
-exclude : true
 ---
 
 # network namespace をつかってる?
